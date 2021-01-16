@@ -1,4 +1,5 @@
 import express from "express";
+import mongoose from "mongoose";
 import { currentUserRouter } from "./routes/current-user";
 import { signInRouter } from "./routes/signin";
 import { signOutRouter } from "./routes/signout";
@@ -25,6 +26,21 @@ app.all("*", () => {
 // error handling
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 3000;
+const start = async () => {
+  try {
+    await mongoose.connect("mongodb://auth-mongo-serv:27017/auth", {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useCreateIndex: true,
+    });
 
-app.listen(3000, () => console.log(`Running server on port ${PORT}`));
+    console.log("Connected to MongoDB");
+  } catch (e) {
+    console.log("[start]", e);
+  }
+  const PORT = process.env.PORT || 3000;
+
+  app.listen(3000, () => console.log(`Running server on port ${PORT}`));
+};
+
+start();

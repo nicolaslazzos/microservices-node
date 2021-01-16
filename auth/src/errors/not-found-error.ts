@@ -7,7 +7,7 @@ export class NotFoundError extends CustomError {
   constructor() {
     super("Page not found");
 
-    // only because we are extending a build in class
+    // only because we are extending a built in class
     Object.setPrototypeOf(this, NotFoundError.prototype);
   }
 
