@@ -18,6 +18,13 @@ spec:
         - name: auth
           image: nicolaslazzos/auth
           imagePullPolicy: Never
+          env:
+            # for setting a secret => kubectl create secret generic jwt-secret --from-literal=JWT_KEY=some_key
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
 ---
 # NodePort service
 

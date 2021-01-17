@@ -1,5 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
+import cookieSession from "cookie-session";
+
 import { currentUserRouter } from "./routes/current-user";
 import { signInRouter } from "./routes/signin";
 import { signOutRouter } from "./routes/signout";
@@ -9,8 +11,15 @@ import { NotFoundError } from "./errors/not-found-error";
 
 const app = express();
 
+// to trust the nginx proxy
+app.set("trust proxy", true);
+
 // middleware
 app.use(express.json({ extended: false } as any));
+
+// signed: false => not encrypted
+// secure: true => only works in a https connection
+app.use(cookieSession({ signed: false, secure: true }));
 
 // routing
 app.use(currentUserRouter);
@@ -27,6 +36,9 @@ app.all("*", () => {
 app.use(errorHandler);
 
 const start = async () => {
+  if (!process.env.JWT_KEY)
+    throw new Error("Environment variable JWT_KEY not found");
+
   try {
     await mongoose.connect("mongodb://auth-mongo-serv:27017/auth", {
       useNewUrlParser: true,
