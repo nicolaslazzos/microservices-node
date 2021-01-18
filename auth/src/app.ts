@@ -18,7 +18,9 @@ app.use(express.json({ extended: false } as any));
 
 // signed: false => not encrypted
 // secure: true => only works in a https connection
-app.use(cookieSession({ signed: false, secure: true }));
+app.use(
+  cookieSession({ signed: false, secure: process.env.NODE_ENV !== "test" })
+);
 
 // routing
 app.use(currentUserRouter);
