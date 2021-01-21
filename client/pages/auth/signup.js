@@ -1,51 +1,62 @@
 import React from "react";
-import axios from "axios";
-import { TextInput, Button } from "evergreen-ui";
+import Router from "next/router";
+import { Header, Button, Form, Input } from "semantic-ui-react";
+
+import useRequest from "../../hooks/use-request";
 
 const SignUp = () => {
+  const [loading, setLoading] = React.useState(false);
   const [data, setData] = React.useState({ email: "", password: "" });
+  const [errors, doRequest] = useRequest({
+    method: "post",
+    url: "/api/users/signup",
+    body: data,
+    onSuccess: () => Router.push('/')
+  });
 
   const onChange = (e) => setData({ ...data, [e.target.name]: e.target.value });
 
   const onSubmit = async (e) => {
-    try {
-      e.preventDefault();
-      const response = await axios.post("/api/users/signup", data);
-    } catch (e) {}
+    setLoading(true);
+    e.preventDefault();
+    await doRequest();
+    setLoading(false);
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          maxWidth: 400,
-          alignItems: "flex-end",
-        }}
-      >
-        <TextInput
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        padding: 20,
+      }}
+    >
+      <Header as="h2">Sign Up</Header>
+      <Form onSubmit={onSubmit} style={{ width: 400 }}>
+        <Form.Field
+          label="Email"
           type="text"
           name="email"
           placeholder="johndoe@gmail.com"
-          width="100%"
-          style={{ marginBottom: 10 }}
+          control={Input}
           onChange={onChange}
+          error={errors?.email}
         />
-
-        <TextInput
+        <Form.Field
+          label="Password"
           type="password"
           name="password"
-          placeholder="*************"
-          width="100%"
-          style={{ marginBottom: 10 }}
+          placeholder="************"
+          control={Input}
           onChange={onChange}
+          error={errors?.password}
         />
-        <Button appearance="primary" type="submit">
+        <Button type="submit" primary loading={loading}>
           Sign Up
         </Button>
-      </div>
-    </form>
+      </Form>
+    </div>
   );
 };
 
