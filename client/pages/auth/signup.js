@@ -24,18 +24,11 @@ const SignUp = () => {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        padding: 20,
-      }}
-    >
+    <div style={styles.container}>
       <Header as="h2">Sign Up</Header>
       <Form
         onSubmit={onSubmit}
-        style={{ width: 400 }}
+        style={styles.form}
         error={!!errors?.errors?.length}
       >
         <Form.Field
@@ -63,6 +56,15 @@ const SignUp = () => {
       </Form>
     </div>
   );
+};
+
+const styles = {
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  form: { width: 400 },
 };
 
 export default SignUp;

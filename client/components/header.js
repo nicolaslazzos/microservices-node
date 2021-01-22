@@ -1,10 +1,31 @@
 import React from "react";
-import { Segment, Header as Header } from "semantic-ui-react";
+import { Segment, Header, Button } from "semantic-ui-react";
 
-const HeaderComponent = ({ title }) => {
+const HeaderComponent = ({ user }) => {
   return (
     <Segment style={styles.container}>
-      <Header as="h3">{title}</Header>
+      <a href="/">
+        <Header as="h2" style={styles.title}>
+          GitTix
+        </Header>
+      </a>
+      <div style={styles.actions}>
+        {!!user && (
+          <Button href="/auth/signout" color="red" style={styles.button}>
+            Sign Out
+          </Button>
+        )}
+        {!user && (
+          <Button href="/auth/signin" primary style={styles.button}>
+            Sign In
+          </Button>
+        )}
+        {!user && (
+          <Button href="/auth/signup" primary style={styles.button}>
+            Sign Up
+          </Button>
+        )}
+      </div>
     </Segment>
   );
 };
@@ -18,8 +39,17 @@ const styles = {
     top: 0,
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
     borderRadius: 0,
+    margin: 0,
   },
+  actions: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "flex-end",
+  },
+  button: { marginLeft: 10 },
+  title: { margin: 0 },
 };
 
 export default HeaderComponent;
