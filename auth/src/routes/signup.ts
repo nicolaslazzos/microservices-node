@@ -35,7 +35,7 @@ router.post(
         process.env.JWT_KEY!
       );
 
-      req.session = { ...req.session, jwt: userJwt };
+      req.session = { jwt: userJwt };
 
       res.status(201).send(user);
     } catch (e) {

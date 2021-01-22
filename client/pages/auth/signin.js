@@ -9,7 +9,7 @@ const SignUp = () => {
   const [data, setData] = React.useState({ email: "", password: "" });
   const [errors, doRequest] = useRequest({
     method: "post",
-    url: "/api/users/signup",
+    url: "/api/users/signin",
     body: data,
     onSuccess: () => Router.push("/"),
   });
@@ -32,7 +32,7 @@ const SignUp = () => {
         padding: 20,
       }}
     >
-      <Header as="h2">Sign Up</Header>
+      <Header as="h2">Sign In</Header>
       <Form
         onSubmit={onSubmit}
         style={{ width: 400 }}
@@ -58,7 +58,7 @@ const SignUp = () => {
         />
         <Message error list={errors?.errors} />
         <Button type="submit" primary loading={loading}>
-          Sign Up
+          Sign In
         </Button>
       </Form>
     </div>

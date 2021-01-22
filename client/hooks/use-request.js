@@ -14,10 +14,12 @@ const useRequest = ({ url, method, body, onSuccess }) => {
 
       return response.data;
     } catch (e) {
-      const newErrors = {};
+      const newErrors = { errors: [] };
 
-      e.response.data.errors.forEach(
-        (error) => (newErrors[error.field] = { content: error.message })
+      e.response.data.errors.forEach((error) =>
+        error?.field
+          ? (newErrors[error.field] = { content: error.message })
+          : newErrors.errors.push(error.message)
       );
 
       setErrors(newErrors);
