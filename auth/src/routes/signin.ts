@@ -2,8 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import { body } from "express-validator";
 import jwt from "jsonwebtoken";
 
-import { validateRequest } from "../middlewares/validate-request";
-import { BadRequestError } from "../errors/bad-request-error";
+import { validateRequest, BadRequestError } from "@nlazzos/gittix-common";
 import { User } from "../models/user";
 import { Password } from "../services/password";
 

@@ -12,8 +12,6 @@ const useRequest = ({ url, method, body, onSuccess }) => {
 
       onSuccess?.(response.data);
 
-      console.log(response.data)
-
       return response.data;
     } catch (e) {
       const newErrors = { errors: [] };
