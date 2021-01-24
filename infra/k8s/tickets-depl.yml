@@ -3,24 +3,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-depl
+  name: tickets-depl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: auth
+      app: tickets
   template:
     metadata:
       labels:
-        app: auth
+        app: tickets
     spec:
       containers:
-        - name: auth
-          image: nicolaslazzos/auth
+        - name: tickets
+          image: nicolaslazzos/tickets
           imagePullPolicy: Never
           env:
             - name: MONGO_URI
-              value: mongodb://auth-mongo-serv:27017/auth
+              value: mongodb://tickets-mongo-serv:27017/tickets
             # for setting a secret => kubectl create secret generic jwt-secret --from-literal=JWT_KEY=some_key
             - name: JWT_KEY
               valueFrom:
@@ -33,13 +33,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: auth-serv
+  name: tickets-serv
 spec:
   type: NodePort
   selector:
-    app: auth
+    app: tickets
   ports:
-    - name: auth
+    - name: tickets
       protocol: TCP
       port: 3000
       targetPort: 3000
