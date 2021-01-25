@@ -1,7 +1,12 @@
 import express from "express";
 import cookieSession from "cookie-session";
 
-import { errorHandler, NotFoundError } from "@nlazzos/gittix-common";
+import {
+  errorHandler,
+  NotFoundError,
+  currentUser,
+} from "@nlazzos/gittix-common";
+import { newTicketRouter } from "./routes/new";
 
 const app = express();
 
@@ -17,7 +22,10 @@ app.use(
   cookieSession({ signed: false, secure: process.env.NODE_ENV !== "test" })
 );
 
+app.use(currentUser);
+
 // routing
+app.use(newTicketRouter);
 
 // not handled routes
 app.all("*", () => {
