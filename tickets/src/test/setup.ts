@@ -41,7 +41,7 @@ global.signin = () => {
   // faking a session for testing purpouses
 
   const payload = {
-    id: "gjhk87T9bk98yHJHKl",
+    id: new mongoose.Types.ObjectId().toHexString(),
     email: "nicolaslazzos@gmail.com",
   };
 

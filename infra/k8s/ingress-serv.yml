@@ -20,6 +20,14 @@ spec:
                 name: auth-serv
                 port:
                   number: 3000
+          - path: /api/tickets/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                # we redirect all the requests to that path to the corresponding service
+                name: tickets-serv
+                port:
+                  number: 3000
           - path: /?(.*)
             pathType: Prefix
             backend:
