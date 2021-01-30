@@ -28,6 +28,14 @@ spec:
                 name: tickets-serv
                 port:
                   number: 3000
+          - path: /api/orders/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                # we redirect all the requests to that path to the corresponding service
+                name: orders-serv
+                port:
+                  number: 3000
           - path: /?(.*)
             pathType: Prefix
             backend:
