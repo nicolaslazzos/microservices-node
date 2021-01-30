@@ -21,12 +21,21 @@ spec:
           env:
             - name: MONGO_URI
               value: mongodb://tickets-mongo-serv:27017/tickets
-            # for setting a secret => kubectl create secret generic jwt-secret --from-literal=JWT_KEY=some_key
             - name: JWT_KEY
+              # for setting a secret => kubectl create secret generic jwt-secret --from-literal=JWT_KEY=some_key
               valueFrom:
                 secretKeyRef:
                   name: jwt-secret
                   key: JWT_KEY
+            - name: NATS_URL
+              value: http://nats-serv:4222
+            - name: NATS_CLUSTER_ID
+              value: ticketing
+            - name: NATS_CLIENT_ID
+              # because every running copy of a service must have a unque clientId when connecting to nats, we are going to use the pod's name
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
 ---
 # NodePort service
 
