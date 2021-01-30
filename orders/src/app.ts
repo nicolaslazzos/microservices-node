@@ -6,6 +6,10 @@ import {
   NotFoundError,
   currentUser,
 } from "@nlazzos/gittix-common";
+import { newOrderRouter } from "./routes/new";
+import { showOrderRouter } from "./routes/show";
+import { indexOrderRouter } from "./routes/index";
+import { deleteOrderRouter } from "./routes/delete";
 
 const app = express();
 
@@ -24,6 +28,10 @@ app.use(
 app.use(currentUser);
 
 // routing
+app.use(newOrderRouter);
+app.use(showOrderRouter);
+app.use(indexOrderRouter);
+app.use(deleteOrderRouter);
 
 // not handled routes
 app.all("*", () => {
