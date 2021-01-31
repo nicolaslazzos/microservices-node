@@ -1,6 +1,5 @@
 import express, { Request, Response, NextFunction } from "express";
-import { body } from "express-validator";
-import { requireAuth, validateRequest } from "@nlazzos/gittix-common";
+import { requireAuth } from "@nlazzos/gittix-common";
 
 import { natsWrapper } from "../nats-wrapper";
 import { Order } from "../models/order";

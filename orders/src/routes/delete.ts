@@ -1,7 +1,11 @@
 import express, { Request, Response, NextFunction } from "express";
-import { body } from "express-validator";
-import { requireAuth, validateRequest } from "@nlazzos/gittix-common";
+import {
+  requireAuth,
+  NotAuthorizedError,
+  NotFoundError,
+} from "@nlazzos/gittix-common";
 
+import { Order, OrderStatus } from "../models/order";
 import { natsWrapper } from "../nats-wrapper";
 
 const router = express.Router();
@@ -11,9 +15,19 @@ router.delete(
   requireAuth,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { title, price } = req.body;
+      const { id } = req.params;
 
-      res.send({});
+      const order = await Order.findById(id).populate("ticket");
+
+      if (!order) throw new NotFoundError();
+
+      if (order.userId !== req.user!.id) throw new NotAuthorizedError();
+
+      order.status = OrderStatus.Cancelled;
+
+      await order.save();
+
+      res.status(204).send(order);
     } catch (e) {
       next(e);
     }
