@@ -3,6 +3,7 @@ import { body } from "express-validator";
 import { requireAuth, validateRequest } from "@nlazzos/gittix-common";
 
 import { natsWrapper } from "../nats-wrapper";
+import { Order } from "../models/order";
 
 const router = express.Router();
 
@@ -11,9 +12,9 @@ router.get(
   requireAuth,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { title, price } = req.body;
+      const orders = await Order.find({ userId: req.user!.id }).populate("ticket");
 
-      res.send({});
+      res.status(200).send(orders);
     } catch (e) {
       next(e);
     }
