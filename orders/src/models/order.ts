@@ -3,6 +3,8 @@ import { OrderStatus } from "@nlazzos/gittix-common";
 
 import { TicketDoc } from "./ticket";
 
+export { OrderStatus };
+
 // typescript types
 
 interface OrderAttrs {
