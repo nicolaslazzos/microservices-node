@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { Order, OrderStatus } from "./order";
 
 interface TicketAttrs {
+  id: string;
   title: string;
   price: number;
 }
@@ -55,6 +56,13 @@ const TicketModel = mongoose.model<TicketDoc, TicketModel>(
 // extending the original model to enforce type validation with typescript
 export class Ticket extends TicketModel {
   constructor(attrs: TicketAttrs) {
-    super(attrs);
+    let a: any = { ...attrs };
+
+    if (attrs?.id) {
+      a = { _id: attrs.id, ...attrs };
+      delete a.id;
+    }
+
+    super(a);
   }
 }

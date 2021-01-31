@@ -25,7 +25,7 @@ build:
           - src: "src/**/.*ts"
             dest: .
     - image: nicolaslazzos/orders
-      context: tickets
+      context: orders
       docker:
         dockerfile: Dockerfile
       sync:
