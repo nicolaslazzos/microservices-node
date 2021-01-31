@@ -12,7 +12,9 @@ router.get(
   requireAuth,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const orders = await Order.find({ userId: req.user!.id }).populate("ticket");
+      const orders = await Order.find({ userId: req.user!.id }).populate(
+        "ticket"
+      );
 
       res.status(200).send(orders);
     } catch (e) {
