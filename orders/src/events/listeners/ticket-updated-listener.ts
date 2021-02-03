@@ -12,9 +12,10 @@ export class TicketUpdatedListeter extends Listener<TicketUpdatedEvent> {
 
   async onMessage(data: TicketUpdatedEvent["data"], msg: Message) {
     try {
-      const { id, title, price } = data;
+      const { title, price } = data;
 
-      const ticket = await Ticket.findById(id);
+      // see method implementation in the ticket.ts model
+      const ticket = await Ticket.findByEvent(data);
 
       if (!ticket) throw new Error("Ticket not found");
 

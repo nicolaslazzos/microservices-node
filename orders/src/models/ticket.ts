@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import { updateIfCurrentPlugin } from "mongoose-update-if-current";
+
 import { Order, OrderStatus } from "./order";
 
 interface TicketAttrs {
@@ -10,10 +12,13 @@ interface TicketAttrs {
 export interface TicketDoc extends mongoose.Document {
   title: string;
   price: number;
+  __v: number;
   isReserved(): Promise<boolean>;
 }
 
-interface TicketModel extends mongoose.Model<TicketDoc> {}
+interface TicketModel extends mongoose.Model<TicketDoc> {
+  findByEvent(event: { id: string; __v: number }): Promise<TicketDoc | null>;
+}
 
 const ticketSchema = new mongoose.Schema<TicketDoc>(
   {
@@ -47,6 +52,14 @@ ticketSchema.methods.isReserved = async function () {
 
   return !!order;
 };
+
+
+// find the document with the previous version, to handle concurrency issues when events are coming out of order
+ticketSchema.statics.findByEvent = (event: { id: string; __v: number }) => {
+  return Ticket.findOne({ _id: event.id, __v: event.__v - 1 });
+};
+
+ticketSchema.plugin(updateIfCurrentPlugin);
 
 const TicketModel = mongoose.model<TicketDoc, TicketModel>(
   "Ticket",
