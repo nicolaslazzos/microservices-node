@@ -3,11 +3,11 @@ import { Message } from "node-nats-streaming";
 import { TicketCreatedEvent } from "@nlazzos/gittix-common";
 
 import { Ticket } from "../../../models/ticket";
-import { TicketCreatedListeter } from "../ticket-created-listener";
+import { TicketCreatedListener } from "../ticket-created-listener";
 import { natsWrapper } from "../../../nats-wrapper";
 
 const setup = async () => {
-  const listener = new TicketCreatedListeter(natsWrapper.client);
+  const listener = new TicketCreatedListener(natsWrapper.client);
 
   const data: TicketCreatedEvent["data"] = {
     __v: 0,

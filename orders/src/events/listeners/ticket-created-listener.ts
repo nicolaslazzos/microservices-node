@@ -4,7 +4,7 @@ import { Listener, TicketCreatedEvent, Subjects } from "@nlazzos/gittix-common";
 import { Ticket } from "../../models/ticket";
 import { queueGroupName } from "./queue-group-name";
 
-export class TicketCreatedListeter extends Listener<TicketCreatedEvent> {
+export class TicketCreatedListener extends Listener<TicketCreatedEvent> {
   readonly subject = Subjects.TicketCreated;
 
   // if we have multiple copies of a service, the queue group name makes sure that an event will be sent only to one of these copies

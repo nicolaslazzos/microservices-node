@@ -5,6 +5,7 @@ import {
   validateRequest,
   NotFoundError,
   NotAuthorizedError,
+  BadRequestError
 } from "@nlazzos/gittix-common";
 
 import { Ticket } from "../models/ticket";
@@ -18,9 +19,7 @@ router.put(
   requireAuth,
   [
     body("title").not().isEmpty().withMessage("Title cannot be empty"),
-    body("price")
-      .isFloat({ gt: 0 })
-      .withMessage("Price must be greater than 0"),
+    body("price").isFloat({ gt: 0 }).withMessage("Price must be greater than 0")
   ],
   validateRequest,
   async (req: Request, res: Response, next: NextFunction) => {
@@ -34,6 +33,8 @@ router.put(
 
       if (ticket.userId !== req.user!.id) throw new NotAuthorizedError();
 
+      if (ticket.orderId) throw new BadRequestError("A reserved ticket cannot be modified");
+
       ticket.set({ title, price });
 
       await ticket.save();
@@ -43,7 +44,7 @@ router.put(
         title: ticket.title,
         price: ticket.price,
         userId: ticket.userId,
-        __v: ticket.__v,
+        __v: ticket.__v
       });
 
       res.status(200).send(ticket);

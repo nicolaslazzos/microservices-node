@@ -11,6 +11,7 @@ interface TicketDoc extends mongoose.Document {
   title: string;
   price: number;
   userId: string;
+  orderId?: string;
   __v: number;
 }
 
@@ -20,33 +21,33 @@ const ticketSchema = new mongoose.Schema<TicketDoc>(
   {
     title: {
       type: String,
-      required: true,
+      required: true
     },
     price: {
       type: Number,
-      required: true,
+      required: true
     },
     userId: {
       type: String,
-      required: true,
+      required: true
     },
+    orderId: {
+      type: String
+    }
   },
   {
     toJSON: {
       transform(doc, ret) {
         ret.id = ret._id;
         delete ret._id;
-      },
-    },
+      }
+    }
   }
 );
 
 ticketSchema.plugin(updateIfCurrentPlugin);
 
-const TicketModel = mongoose.model<TicketDoc, TicketModel>(
-  "Ticket",
-  ticketSchema
-);
+const TicketModel = mongoose.model<TicketDoc, TicketModel>("Ticket", ticketSchema);
 
 // extending the original model to enforce type validation with typescript
 export class Ticket extends TicketModel {
