@@ -1,10 +1,11 @@
+import mongoose from "mongoose";
 import request from "supertest";
 
 import { Ticket } from "../../models/ticket";
 import { app } from "../../app";
 
 const createTicket = async () => {
-  const ticket = new Ticket({ title: "A test ticket", price: 20 });
+  const ticket = new Ticket({ id: new mongoose.Types.ObjectId().toHexString(), title: "A test ticket", price: 20 });
   await ticket.save();
   return ticket;
 };
@@ -17,10 +18,7 @@ it("returns a list of a particular user orders", async () => {
   const secondTicket = await createTicket();
   const thirdTicket = await createTicket();
 
-  await request(app)
-    .post("/api/orders")
-    .set("Cookie", firstUser)
-    .send({ ticketId: firstTicket.id });
+  await request(app).post("/api/orders").set("Cookie", firstUser).send({ ticketId: firstTicket.id });
 
   const { body: firstOrder } = await request(app)
     .post("/api/orders")
@@ -32,10 +30,7 @@ it("returns a list of a particular user orders", async () => {
     .set("Cookie", secondUser)
     .send({ ticketId: thirdTicket.id });
 
-  const { body: orders } = await request(app)
-    .get("/api/orders")
-    .set("Cookie", secondUser)
-    .expect(200);
+  const { body: orders } = await request(app).get("/api/orders").set("Cookie", secondUser).expect(200);
 
   expect(orders.length).toEqual(2);
   expect(orders[0].id).toEqual(firstOrder.id);

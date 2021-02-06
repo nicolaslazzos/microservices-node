@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import request from "supertest";
 
 import { Ticket } from "../../models/ticket";
@@ -8,7 +9,7 @@ import { app } from "../../app";
 it("deletes an order", async () => {
   const cookie = global.signin();
 
-  const ticket = new Ticket({ title: "A test ticket", price: 20 });
+  const ticket = new Ticket({ id: new mongoose.Types.ObjectId().toHexString(), title: "A test ticket", price: 20 });
 
   await ticket.save();
 
@@ -18,11 +19,7 @@ it("deletes an order", async () => {
     .send({ ticketId: ticket.id })
     .expect(201);
 
-  await request(app)
-    .delete(`/api/orders/${order.id}`)
-    .set("Cookie", cookie)
-    .send()
-    .expect(204);
+  await request(app).delete(`/api/orders/${order.id}`).set("Cookie", cookie).send().expect(204);
 
   const updated = await Order.findById(order.id);
 
@@ -32,7 +29,7 @@ it("deletes an order", async () => {
 it("emits an order cancelled event", async () => {
   const cookie = global.signin();
 
-  const ticket = new Ticket({ title: "A test ticket", price: 20 });
+  const ticket = new Ticket({ id: new mongoose.Types.ObjectId().toHexString(), title: "A test ticket", price: 20 });
 
   await ticket.save();
 
@@ -42,11 +39,7 @@ it("emits an order cancelled event", async () => {
     .send({ ticketId: ticket.id })
     .expect(201);
 
-  await request(app)
-    .delete(`/api/orders/${order.id}`)
-    .set("Cookie", cookie)
-    .send()
-    .expect(204);
+  await request(app).delete(`/api/orders/${order.id}`).set("Cookie", cookie).send().expect(204);
 
   expect(natsWrapper.client.publish).toHaveBeenCalled();
 });

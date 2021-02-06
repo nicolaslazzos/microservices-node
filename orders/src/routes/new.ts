@@ -1,12 +1,7 @@
 import mongoose from "mongoose";
 import express, { Request, Response, NextFunction } from "express";
 import { body } from "express-validator";
-import {
-  requireAuth,
-  validateRequest,
-  NotFoundError,
-  BadRequestError,
-} from "@nlazzos/gittix-common";
+import { requireAuth, validateRequest, NotFoundError, BadRequestError } from "@nlazzos/gittix-common";
 
 import { Ticket } from "../models/ticket";
 import { Order, OrderStatus } from "../models/order";
@@ -25,7 +20,7 @@ router.post(
       .not()
       .isEmpty()
       .custom((input: string) => mongoose.Types.ObjectId.isValid(input))
-      .withMessage("A valid ticket id must be provided"),
+      .withMessage("A valid ticket id must be provided")
   ],
   validateRequest,
   async (req: Request, res: Response, next: NextFunction) => {
@@ -42,15 +37,13 @@ router.post(
 
       const expiration = new Date();
 
-      expiration.setSeconds(
-        expiration.getSeconds() + EXPIRATION_WINDOW_SECONDS
-      );
+      expiration.setSeconds(expiration.getSeconds() + EXPIRATION_WINDOW_SECONDS);
 
       const order = new Order({
         status: OrderStatus.Created,
         userId: req.user!.id,
         expiresAt: expiration,
-        ticket,
+        ticket
       });
 
       await order.save();
@@ -62,8 +55,9 @@ router.post(
         expiresAt: order.expiresAt.toISOString(),
         ticket: {
           id: ticket.id,
-          price: ticket.price,
+          price: ticket.price
         },
+        __v: ticket.__v
       });
 
       res.status(201).send(order);

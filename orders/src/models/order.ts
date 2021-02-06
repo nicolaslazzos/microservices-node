@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { OrderStatus } from "@nlazzos/gittix-common";
+import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 
 import { TicketDoc } from "./ticket";
 
@@ -19,6 +20,7 @@ interface OrderDoc extends mongoose.Document {
   expiresAt: Date;
   userId: string;
   ticket: TicketDoc;
+  __v: number;
 }
 
 interface OrderModel extends mongoose.Model<OrderDoc> {}
@@ -31,29 +33,31 @@ const orderSchema = new mongoose.Schema<OrderDoc>(
       type: String,
       required: true,
       enum: Object.values(OrderStatus),
-      default: OrderStatus.Created,
+      default: OrderStatus.Created
     },
     expiresAt: {
-      type: mongoose.Schema.Types.Date,
+      type: mongoose.Schema.Types.Date
     },
     userId: {
       type: String,
-      required: true,
+      required: true
     },
     ticket: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Ticket",
-    },
+      ref: "Ticket"
+    }
   },
   {
     toJSON: {
       transform(doc, ret) {
         ret.id = ret._id;
         delete ret._id;
-      },
-    },
+      }
+    }
   }
 );
+
+orderSchema.plugin(updateIfCurrentPlugin);
 
 const OrderModel = mongoose.model<OrderDoc, OrderModel>("Order", orderSchema);
 

@@ -24,21 +24,21 @@ const ticketSchema = new mongoose.Schema<TicketDoc>(
   {
     title: {
       type: String,
-      required: true,
+      required: true
     },
     price: {
       type: Number,
       required: true,
-      min: 0,
-    },
+      min: 0
+    }
   },
   {
     toJSON: {
       transform(doc, ret) {
         ret.id = ret._id;
         delete ret._id;
-      },
-    },
+      }
+    }
   }
 );
 
@@ -46,13 +46,12 @@ ticketSchema.methods.isReserved = async function () {
   const order = await Order.findOne({
     ticket: this,
     status: {
-      $ne: OrderStatus.Cancelled,
-    },
+      $ne: OrderStatus.Cancelled
+    }
   });
 
   return !!order;
 };
-
 
 // find the document with the previous version, to handle concurrency issues when events are coming out of order
 ticketSchema.statics.findByEvent = (event: { id: string; __v: number }) => {
@@ -61,16 +60,14 @@ ticketSchema.statics.findByEvent = (event: { id: string; __v: number }) => {
 
 ticketSchema.plugin(updateIfCurrentPlugin);
 
-const TicketModel = mongoose.model<TicketDoc, TicketModel>(
-  "Ticket",
-  ticketSchema
-);
+const TicketModel = mongoose.model<TicketDoc, TicketModel>("Ticket", ticketSchema);
 
 // extending the original model to enforce type validation with typescript
 export class Ticket extends TicketModel {
   constructor(attrs: TicketAttrs) {
     let a: any = { ...attrs };
 
+    // this is because in this service we want to have the ticket id to match the one in the ticket service
     if (attrs?.id) {
       a = { _id: attrs.id, ...attrs };
       delete a.id;
