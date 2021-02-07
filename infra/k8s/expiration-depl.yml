@@ -1,0 +1,35 @@
+# Deployment
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: expiration-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: expiration
+  template:
+    metadata:
+      labels:
+        app: expiration
+    spec:
+      containers:
+        - name: expiration
+          image: nicolaslazzos/expiration
+          imagePullPolicy: Never
+          env:
+            - name: REDIS_HOST
+              # specifying how to connect to the redis depl
+              value: expiration-redis-serv
+            - name: NATS_URL
+              value: http://nats-serv:4222
+            - name: NATS_CLUSTER_ID
+              value: ticketing
+            - name: NATS_CLIENT_ID
+              # because every running copy of a service must have a unque clientId when connecting to nats, we are going to use the pod's name
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+                  
+# here we dont need a clusterip or nodeport service because the service will be communicating with others only through nats
