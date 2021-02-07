@@ -1,4 +1,5 @@
 import { natsWrapper } from "./nats-wrapper";
+import { OrderCreatedListener } from "./events/listeners/order-created-listener";
 
 const start = async () => {
   if (!process.env.NATS_URL) throw new Error("Environment variable NATS_URL not found");
@@ -24,6 +25,8 @@ const start = async () => {
     // to test that we can delete the nats-depl pod
     process.on("SIGINT", () => natsWrapper.client.close());
     process.on("SIGTERM", () => natsWrapper.client.close());
+
+    new OrderCreatedListener(natsWrapper.client).listen();
   } catch (e) {
     console.log("[start]", e);
   }
