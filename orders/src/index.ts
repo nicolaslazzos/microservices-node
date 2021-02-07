@@ -3,32 +3,24 @@ import mongoose from "mongoose";
 
 import { TicketCreatedListener } from "./events/listeners/ticket-created-listener";
 import { TicketUpdatedListener } from "./events/listeners/ticket-updated-listener";
+import { ExpirationCompleteListener } from "./events/listeners/expiration-complete-listener";
 import { natsWrapper } from "./nats-wrapper";
 
 const start = async () => {
-  if (!process.env.JWT_KEY)
-    throw new Error("Environment variable JWT_KEY not found");
+  if (!process.env.JWT_KEY) throw new Error("Environment variable JWT_KEY not found");
 
-  if (!process.env.MONGO_URI)
-    throw new Error("Environment variable MONGO_URI not found");
+  if (!process.env.MONGO_URI) throw new Error("Environment variable MONGO_URI not found");
 
-  if (!process.env.NATS_URL)
-    throw new Error("Environment variable NATS_URL not found");
+  if (!process.env.NATS_URL) throw new Error("Environment variable NATS_URL not found");
 
-  if (!process.env.NATS_CLUSTER_ID)
-    throw new Error("Environment variable NATS_CLUSTER_ID not found");
+  if (!process.env.NATS_CLUSTER_ID) throw new Error("Environment variable NATS_CLUSTER_ID not found");
 
-  if (!process.env.NATS_CLIENT_ID)
-    throw new Error("Environment variable NATS_CLIENT_ID not found");
+  if (!process.env.NATS_CLIENT_ID) throw new Error("Environment variable NATS_CLIENT_ID not found");
 
   try {
     // the clientId (second parameter) must be unique for every copy of the service (see deployment .yml file)
 
-    await natsWrapper.connect(
-      process.env.NATS_CLUSTER_ID,
-      process.env.NATS_CLIENT_ID,
-      process.env.NATS_URL
-    );
+    await natsWrapper.connect(process.env.NATS_CLUSTER_ID, process.env.NATS_CLIENT_ID, process.env.NATS_URL);
 
     natsWrapper.client.on("close", () => {
       console.log("NATS connection closed");
@@ -46,11 +38,12 @@ const start = async () => {
     // initializing events listeners
     new TicketCreatedListener(natsWrapper.client).listen();
     new TicketUpdatedListener(natsWrapper.client).listen();
+    new ExpirationCompleteListener(natsWrapper.client).listen();
 
     await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      useCreateIndex: true,
+      useCreateIndex: true
     });
 
     console.log("Connected to MongoDB");
