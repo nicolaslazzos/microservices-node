@@ -1,0 +1,54 @@
+# Deployment
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payments-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payments
+  template:
+    metadata:
+      labels:
+        app: payments
+    spec:
+      containers:
+        - name: payments
+          image: nicolaslazzos/payments
+          imagePullPolicy: Never
+          env:
+            - name: MONGO_URI
+              value: mongodb://payments-mongo-serv:27017/payments
+            - name: JWT_KEY
+              # for setting a secret => kubectl create secret generic jwt-secret --from-literal=JWT_KEY=some_key
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+            - name: NATS_URL
+              value: http://nats-serv:4222
+            - name: NATS_CLUSTER_ID
+              value: ticketing
+            - name: NATS_CLIENT_ID
+              # because every running copy of a service must have a unque clientId when connecting to nats, we are going to use the pod's name
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+---
+# NodePort service
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: payments-serv
+spec:
+  type: NodePort
+  selector:
+    app: payments
+  ports:
+    - name: payments
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
