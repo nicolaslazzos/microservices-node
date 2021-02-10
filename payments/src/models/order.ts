@@ -2,24 +2,22 @@ import mongoose from "mongoose";
 import { OrderStatus } from "@nlazzos/gittix-common";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 
-import { TicketDoc } from "./ticket";
-
 export { OrderStatus };
 
 // typescript types
 
 interface OrderAttrs {
+  id: string;
   status: OrderStatus;
-  expiresAt: Date;
   userId: string;
-  ticket: TicketDoc;
+  price: number;
+  __v: number;
 }
 
 interface OrderDoc extends mongoose.Document {
   status: OrderStatus;
-  expiresAt: Date;
   userId: string;
-  ticket: TicketDoc;
+  price: number;
   __v: number;
 }
 
@@ -35,16 +33,13 @@ const orderSchema = new mongoose.Schema<OrderDoc>(
       enum: Object.values(OrderStatus),
       default: OrderStatus.Created
     },
-    expiresAt: {
-      type: mongoose.Schema.Types.Date
-    },
     userId: {
       type: String,
       required: true
     },
-    ticket: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Ticket"
+    price: {
+      type: Number,
+      required: true
     }
   },
   {
@@ -57,11 +52,6 @@ const orderSchema = new mongoose.Schema<OrderDoc>(
   }
 );
 
-// find the document with the previous version, to handle concurrency issues when events are coming out of order
-orderSchema.statics.findByEvent = (event: { id: string; __v: number }) => {
-  return Order.findOne({ _id: event.id, __v: event.__v - 1 });
-};
-
 orderSchema.plugin(updateIfCurrentPlugin);
 
 const OrderModel = mongoose.model<OrderDoc, OrderModel>("Order", orderSchema);
@@ -69,6 +59,14 @@ const OrderModel = mongoose.model<OrderDoc, OrderModel>("Order", orderSchema);
 // extending the original model to enforce type validation with typescript
 export class Order extends OrderModel {
   constructor(attrs: OrderAttrs) {
-    super(attrs);
+    let a: any = { ...attrs };
+
+    // this is because in this service we want to have the order id to match the one in the order service
+    if (attrs?.id) {
+      a = { _id: attrs.id, ...attrs };
+      delete a.id;
+    }
+
+    super(a);
   }
 }
