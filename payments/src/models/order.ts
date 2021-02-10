@@ -21,7 +21,9 @@ interface OrderDoc extends mongoose.Document {
   __v: number;
 }
 
-interface OrderModel extends mongoose.Model<OrderDoc> {}
+interface OrderModel extends mongoose.Model<OrderDoc> {
+  findByEvent(event: { id: string; __v: number }): Promise<OrderDoc | null>;
+}
 
 // mongoose types
 
@@ -51,6 +53,11 @@ const orderSchema = new mongoose.Schema<OrderDoc>(
     }
   }
 );
+
+// find the document with the previous version, to handle concurrency issues when events are coming out of order
+orderSchema.statics.findByEvent = (event: { id: string; __v: number }) => {
+  return Order.findOne({ _id: event.id, __v: event.__v - 1 });
+};
 
 orderSchema.plugin(updateIfCurrentPlugin);
 
