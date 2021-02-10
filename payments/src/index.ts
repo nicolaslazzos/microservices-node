@@ -1,6 +1,8 @@
 import { app } from "./app";
 import mongoose from "mongoose";
 import { natsWrapper } from "./nats-wrapper";
+import { OrderCreatedListener } from "./events/listeners/order-created-listener";
+import { OrderCancelledListener } from "./events/listeners/order-cancelled-listener";
 
 const start = async () => {
   if (!process.env.JWT_KEY) throw new Error("Environment variable JWT_KEY not found");
@@ -30,6 +32,9 @@ const start = async () => {
     // to test that we can delete the nats-depl pod
     process.on("SIGINT", () => natsWrapper.client.close());
     process.on("SIGTERM", () => natsWrapper.client.close());
+
+    new OrderCancelledListener(natsWrapper.client).listen();
+    new OrderCreatedListener(natsWrapper.client).listen();
 
     await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
