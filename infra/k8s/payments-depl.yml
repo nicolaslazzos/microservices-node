@@ -36,6 +36,12 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            - name: STRIPE_KEY
+              # kubectl create secret generic stripe-secret --from-literal STRIPE_KEY=the_actual_key
+              valueFrom:
+                secretKeyRef:
+                  name: stripe-secret
+                  key: STRIPE_KEY
 ---
 # NodePort service
 

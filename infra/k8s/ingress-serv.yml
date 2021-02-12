@@ -36,6 +36,14 @@ spec:
                 name: orders-serv
                 port:
                   number: 3000
+          - path: /api/payments/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                # we redirect all the requests to that path to the corresponding service
+                name: payments-serv
+                port:
+                  number: 3000
           - path: /?(.*)
             pathType: Prefix
             backend:

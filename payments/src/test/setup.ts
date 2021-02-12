@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 declare global {
   namespace NodeJS {
     interface Global {
-      signin(): string[];
+      signin(id?: string): string[];
     }
   }
 }
@@ -23,7 +23,7 @@ beforeAll(async () => {
 
   await mongoose.connect(mongoUri, {
     useNewUrlParser: true,
-    useUnifiedTopology: true,
+    useUnifiedTopology: true
   });
 });
 
@@ -43,19 +43,17 @@ afterAll(async () => {
   await mongoose.connection.close();
 });
 
-global.signin = () => {
+global.signin = (id?: string) => {
   // faking a session for testing purpouses
 
   const payload = {
-    id: new mongoose.Types.ObjectId().toHexString(),
-    email: "nicolaslazzos@gmail.com",
+    id: id ?? new mongoose.Types.ObjectId().toHexString(),
+    email: "nicolaslazzos@gmail.com"
   };
 
   const token = jwt.sign(payload, process.env.JWT_KEY!);
 
-  const session = Buffer.from(JSON.stringify({ jwt: token })).toString(
-    "base64"
-  );
+  const session = Buffer.from(JSON.stringify({ jwt: token })).toString("base64");
 
   return [`express:sess=${session}`];
 };

@@ -1,11 +1,8 @@
 import express from "express";
 import cookieSession from "cookie-session";
 
-import {
-  errorHandler,
-  NotFoundError,
-  currentUser,
-} from "@nlazzos/gittix-common";
+import { errorHandler, NotFoundError, currentUser } from "@nlazzos/gittix-common";
+import { newPaymentRouter } from "../src/routes/new";
 
 const app = express();
 
@@ -17,13 +14,12 @@ app.use(express.json({ extended: false } as any));
 
 // signed: false => not encrypted
 // secure: true => only works in a https connection
-app.use(
-  cookieSession({ signed: false, secure: process.env.NODE_ENV !== "test" })
-);
+app.use(cookieSession({ signed: false, secure: process.env.NODE_ENV !== "test" }));
 
 app.use(currentUser);
 
 // routing
+app.use(newPaymentRouter);
 
 // not handled routes
 app.all("*", () => {
