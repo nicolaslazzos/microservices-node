@@ -4,6 +4,8 @@ import { Card, Image, Button, Message } from "semantic-ui-react";
 
 import useRequest from "../../hooks/use-request";
 
+const placeholder = require("../../images/ticket-placeholder.png");
+
 const TicketDetails = ({ user, ticket }) => {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(false);
@@ -12,7 +14,10 @@ const TicketDetails = ({ user, ticket }) => {
     method: "post",
     url: "/api/orders",
     body: { ticketId: ticket.id },
-    onSuccess: (order) => Router.push("/orders/[orderId]", `/orders/${order.id}`)
+    onSuccess: (order) => {
+      console.log(order);
+      Router.push("/orders/[orderId]", `/orders/${order.id}`);
+    }
   });
 
   React.useEffect(() => {
@@ -34,11 +39,7 @@ const TicketDetails = ({ user, ticket }) => {
 
     return (
       <Card key={ticket.id}>
-        <Image
-          src="https://cdn.dribbble.com/users/1572277/screenshots/7351549/media/69a47a5517f2ab3fea00ef819c29103a.png?compress=1&resize=400x300"
-          wrapped
-          ui={false}
-        />
+        <Image src={placeholder} wrapped ui={false} />
         <Card.Content>
           <Card.Header>{ticket.title}</Card.Header>
           <Card.Meta>

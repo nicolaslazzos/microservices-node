@@ -11,6 +11,7 @@ export { OrderStatus };
 interface OrderAttrs {
   status: OrderStatus;
   expiresAt: Date;
+  createdAt?: Date;
   userId: string;
   ticket: TicketDoc;
 }
@@ -18,6 +19,7 @@ interface OrderAttrs {
 interface OrderDoc extends mongoose.Document {
   status: OrderStatus;
   expiresAt: Date;
+  createdAt: Date;
   userId: string;
   ticket: TicketDoc;
   __v: number;
@@ -37,6 +39,10 @@ const orderSchema = new mongoose.Schema<OrderDoc>(
     },
     expiresAt: {
       type: mongoose.Schema.Types.Date
+    },
+    createdAt: {
+      type: mongoose.Schema.Types.Date,
+      default: Date.now
     },
     userId: {
       type: String,

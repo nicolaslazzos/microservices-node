@@ -5,6 +5,8 @@ import StripeCheckout from "react-stripe-checkout";
 
 import useRequest from "../../hooks/use-request";
 
+const placeholder = require("../../images/ticket-placeholder.png");
+
 const OrderDetails = ({ user, order }) => {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(false);
@@ -14,11 +16,11 @@ const OrderDetails = ({ user, order }) => {
     method: "post",
     url: "/api/payments",
     body: { orderId: order.id },
-    onSuccess: () => Router.push("/")
+    onSuccess: () => Router.push("/orders")
   });
 
   React.useEffect(async () => {
-    const init = new Date(order.expiresAt) - new Date();
+    const init = new Date(order.expiresAt) - new Date(order.createdAt);
 
     if (init <= 0) {
       setProgress(0);
@@ -73,11 +75,7 @@ const OrderDetails = ({ user, order }) => {
 
     return (
       <Card key={order.id}>
-        <Image
-          src="https://cdn.dribbble.com/users/1572277/screenshots/7351549/media/69a47a5517f2ab3fea00ef819c29103a.png?compress=1&resize=400x300"
-          wrapped
-          ui={false}
-        />
+        <Image src={placeholder} wrapped ui={false} />
         <Card.Content>
           <Card.Header>{order.ticket.title}</Card.Header>
           <Card.Meta>
