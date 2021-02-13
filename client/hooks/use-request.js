@@ -4,23 +4,23 @@ import axios from "axios";
 const useRequest = ({ url, method, body, onSuccess }) => {
   const [errors, setErrors] = useState({});
 
-  const doRequest = async () => {
+  const doRequest = async (data = {}) => {
     setErrors({});
 
     try {
-      const response = await axios[method](url, body);
+      const response = await axios[method](url, { ...body, ...data });
 
       onSuccess?.(response.data);
 
       return response.data;
     } catch (e) {
-      const newErrors = { errors: [] };
+      const newErrors = { errors: [], all: [] };
 
-      e.response.data.errors.forEach((error) =>
-        error?.field
-          ? (newErrors[error.field] = { content: error.message })
-          : newErrors.errors.push(error.message)
-      );
+      e?.response?.data?.errors?.forEach((error) => {
+        error?.field ? (newErrors[error.field] = { content: error.message }) : newErrors.errors.push(error.message);
+
+        newErrors.all.push(error.message);
+      });
 
       setErrors(newErrors);
     }
