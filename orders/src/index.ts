@@ -8,6 +8,8 @@ import { PaymentCreatedListener } from "./events/listeners/payment-created-liste
 import { natsWrapper } from "./nats-wrapper";
 
 const start = async () => {
+  console.log("Initializing service...");
+
   if (!process.env.JWT_KEY) throw new Error("Environment variable JWT_KEY not found");
 
   if (!process.env.MONGO_URI) throw new Error("Environment variable MONGO_URI not found");
