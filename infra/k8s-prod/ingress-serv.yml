@@ -1,0 +1,53 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-serv
+  annotations:
+    #  will search all the config files with this annotation looking for routing rules
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  rules:
+    # this is the domain where the app will be running
+    - host: DOMAIN_NAME_HERE
+      http:
+        paths:
+          - path: /api/users/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                # we redirect all the requests to that path to the corresponding service
+                name: auth-serv
+                port:
+                  number: 3000
+          - path: /api/tickets/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                # we redirect all the requests to that path to the corresponding service
+                name: tickets-serv
+                port:
+                  number: 3000
+          - path: /api/orders/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                # we redirect all the requests to that path to the corresponding service
+                name: orders-serv
+                port:
+                  number: 3000
+          - path: /api/payments/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                # we redirect all the requests to that path to the corresponding service
+                name: payments-serv
+                port:
+                  number: 3000
+          - path: /?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: client-serv
+                port:
+                  number: 3000

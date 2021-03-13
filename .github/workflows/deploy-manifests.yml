@@ -1,0 +1,22 @@
+name: deploy-manifests
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'infra/**'
+      
+jobs:
+  build:
+    # already comes with docker installed
+    runs-on: ubuntu-latest
+    steps:
+      # check out all of the code in the repo
+      - uses: actions/checkout@v2
+      # this is for deploying all the deployments or services to digital ocean, not doing it for now
+      # - uses: digitalocean/action-doctl@v2
+      #   with:
+      #   token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      # - run: doctl kubernetes cluster kubeconfig save CLUSTER_NAME_HERE
+      # - run: kubectl apply -f infra/k8s && kubectl apply -f infra/k8s-prod

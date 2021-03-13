@@ -1,11 +1,11 @@
-name: deploy-auth
+name: deploy-tickets
 
 on:
   push:
     branches:
       - master
     paths:
-      - 'auth/**'
+      - 'tickets/**'
       
 jobs:
   build:
@@ -14,16 +14,16 @@ jobs:
     steps:
       # check out all of the code in the repo
       - uses: actions/checkout@v2
-      - run: cd auth && docker build -t nicolaslazzos/auth .
+      - run: cd tickets && docker build -t nicolaslazzos/tickets .
       - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
         env:
           # this secrets should be set in the github repo settings
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      - run: docker push nicolaslazzos/auth
+      - run: docker push nicolaslazzos/tickets
       # this is for deploying it to digital ocean, not doing it for now
       # - uses: digitalocean/action-doctl@v2
       #   with:
       #   token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
       # - run: doctl kubernetes cluster kubeconfig save CLUSTER_NAME_HERE
-      # - run: kubectl rollout restart deployment auth-depl
+      # - run: kubectl rollout restart deployment tickets-depl
