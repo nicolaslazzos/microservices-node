@@ -29,7 +29,7 @@ const OrdersList = ({ user, orders }) => {
     );
   };
 
-  return <Card.Group>{orders.map(renderOrder)}</Card.Group>;
+  return <Card.Group>{orders?.map(renderOrder)}</Card.Group>;
 };
 
 OrdersList.getInitialProps = async (context, client, user) => {

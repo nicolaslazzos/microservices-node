@@ -23,7 +23,7 @@ const App = ({ user, tickets }) => {
     );
   };
 
-  return <Card.Group>{tickets.map(renderTicket)}</Card.Group>;
+  return <Card.Group>{tickets?.map(renderTicket)}</Card.Group>;
 };
 
 App.getInitialProps = async (context, client, user) => {
